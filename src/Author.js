@@ -24,6 +24,7 @@ enviaForm(evento){
       type: 'post',
       data:JSON.stringify({nome:this.state.nome,email:this.state.email,senha:this.state.senha}),
       sucess:function(resposta){
+        this.props.callbackAtualizaListagem(resposta);
       }.bind(this),
       error: function(resposta){
           alert("Error")
@@ -94,6 +95,7 @@ export default class AuthorBox extends Component{
     constructor() {
         super();
         this.state = {lista : []};
+        this.atualizaListagem = this.atualizaListagem.bind(this);
         }
         componentDidMount(){
           $.ajax({
@@ -106,10 +108,15 @@ export default class AuthorBox extends Component{
         );
     }
 
+    
+    atualizaListagem(novaLista){
+        this.setState({lista:novaLista});
+    }
+
     render(){
         return(
             <div className="content" id="content">
-            <FormAuthor />
+            <FormAuthor callbackAtualizaListagem={this.atualizaListagem}/>
             <TableAuthor lista={this.state.lista} />
             </div>
         );
