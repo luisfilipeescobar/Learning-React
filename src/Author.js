@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import BotaoSubmitCustomizado from './componentes/BotaoSubmitCustomizado';
 import InputCustomizado from './componentes/inputCustomizado';
 import $ from 'jquery';
-
+import PubSub from 'pubsub-js';
 
 class FormAuthor extends Component{
 
@@ -16,18 +16,18 @@ class FormAuthor extends Component{
           }
 
 enviaForm(evento){
-    evento.preventDefault();    
+    evento.preventDefault();
     $.ajax({
-      url:"https://cdc-react.herokuapp.com/api/autores",
+      url:"http://localhost:8080/api/autores",
       contentType: 'application/json',
       dataType:'json',
       type: 'post',
       data:JSON.stringify({nome:this.state.nome,email:this.state.email,senha:this.state.senha}),
-      sucess:function(resposta){
-        this.props.callbackAtualizaListagem(resposta);
-      }.bind(this),
-      error: function(resposta){
-          alert("Error")
+      success:function(novaListagem){
+        PubSub.publish('atualiza-lista-autores',novaListagem);  //Dispara um aviso geral de novaListagem disponivel
+      },
+      error: function(novaListagem){
+          alert("Error");
       }
     })
   }
@@ -95,28 +95,25 @@ export default class AuthorBox extends Component{
     constructor() {
         super();
         this.state = {lista : []};
-        this.atualizaListagem = this.atualizaListagem.bind(this);
         }
         componentDidMount(){
           $.ajax({
-              url:"https://cdc-react.herokuapp.com/api/autores",
+              url:"http://localhost:8080/api/autores",
               dataType: 'json',
               success:function(resposta){
                 this.setState({lista:resposta});
                 }.bind(this)
           }
         );
-    }
-
-    
-    atualizaListagem(novaLista){
-        this.setState({lista:novaLista});
+        PubSub.subscribe('atualiza-lista-autores',function(topico,novaLista){
+            this.setState({lista:novaLista});
+        }.bind(this));
     }
 
     render(){
         return(
             <div className="content" id="content">
-            <FormAuthor callbackAtualizaListagem={this.atualizaListagem}/>
+            <FormAuthor/>
             <TableAuthor lista={this.state.lista} />
             </div>
         );

@@ -6,7 +6,6 @@ import AuthorBox from './Author';
 
 
 class App extends Component {
-
   render() {
     return (
 <div>
