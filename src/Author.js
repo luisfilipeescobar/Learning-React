@@ -3,6 +3,7 @@ import BotaoSubmitCustomizado from './componentes/BotaoSubmitCustomizado';
 import InputCustomizado from './componentes/inputCustomizado';
 import $ from 'jquery';
 import PubSub from 'pubsub-js';
+import TratadorErros from './TratadorErros';
 
 class FormAuthor extends Component{
 
@@ -25,9 +26,15 @@ enviaForm(evento){
       data:JSON.stringify({nome:this.state.nome,email:this.state.email,senha:this.state.senha}),
       success:function(novaListagem){
         PubSub.publish('atualiza-lista-autores',novaListagem);  //Dispara um aviso geral de novaListagem disponivel
+        this.setState({nome:'',email:'',senha:''});
+    }.bind(this),
+      error: function(resposta){
+          if(resposta.status === 400){
+            new TratadorErros().publicaErros(resposta.responseJSON);
+          }
       },
-      error: function(novaListagem){
-          alert("Error");
+      beforeSend: function(){
+        PubSub.publish("limpa-erros",{});
       }
     })
   }
