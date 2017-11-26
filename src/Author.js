@@ -7,14 +7,12 @@ import TratadorErros from './TratadorErros';
 
 class FormAuthor extends Component{
 
-        constructor() {
-          super();
-          this.state = {nome:'',email:'',senha:''};
-          this.enviaForm = this.enviaForm.bind(this);
-          this.setNome = this.setNome.bind(this);
-          this.setEmail = this.setEmail.bind(this);
-          this.setSenha = this.setSenha.bind(this);
-          }
+    constructor() {
+        super();    
+        this.state = {nome:'',email:'',senha:''};
+        this.enviaForm = this.enviaForm.bind(this);
+        this.salvaAlteracao = this.salvaAlteracao.bind(this);
+      }
 
 enviaForm(evento){
     evento.preventDefault();
@@ -38,27 +36,32 @@ enviaForm(evento){
       }
     })
   }
-  
-    setNome(evento){        //Pegando informação do input Nome
-      this.setState({nome:evento.target.value});
-    }
-    setEmail(evento){       //Pegando informação do input Email
-      this.setState({email:evento.target.value});
-    }
-    setSenha(evento){       //Pegando informação do input Senha
-      this.setState({senha:evento.target.value});
-    }
+  salvaAlteracao(nomeInput,evento){
+    var campoSendoAlterado = [];
+    campoSendoAlterado[nomeInput] = evento.target.value;
+    this.setState(campoSendoAlterado);
+  }
+    // setNome(evento){        //Pegando informação do input Nome
+    //   this.setState({nome:evento.target.value});
+    // }
+    // setEmail(evento){       //Pegando informação do input Email
+    //   this.setState({email:evento.target.value});
+    // }
+    // setSenha(evento){       //Pegando informação do input Senha
+    //   this.setState({senha:evento.target.value});
+    // }
   
 
     render(){
         return(
         <div className="pure-form pure-form-aligned">
         <form className="pure-form pure-form-aligned" onSubmit={this.enviaForm} method="post">
-        <InputCustomizado id="nome" type="text" name="nome" value={this.state.nome} onChange={this.setNome} label="Nome"/>                                              
-        <InputCustomizado id="email" type="email" name="email" value={this.state.email} onChange={this.setEmail} label="Email"/>                                              
-        <InputCustomizado id="senha" type="password" name="senha" value={this.state.senha} onChange={this.setSenha} label="Senha"/>                                                   <div className="pure-control-group">                                  
+        <InputCustomizado id="nome" type="text" name="nome" value={this.state.nome} onChange={this.salvaAlteracao.bind(this,'nome')} label="Name"/>                                              
+        <InputCustomizado id="email" type="email" name="email" value={this.state.email} onChange={this.salvaAlteracao.bind(this,'email')} label="Email"/>                                              
+        <InputCustomizado id="senha" type="password" name="senha" value={this.state.senha} onChange={this.salvaAlteracao.bind(this,'senha')} label="Password"/>                                                   
+        <div className="pure-control-group">                                  
             <label></label>
-            <BotaoSubmitCustomizado label="Gravar"/>                                    
+            <BotaoSubmitCustomizado label="Record"/>                                    
         </div>
         </form>        
 
@@ -71,7 +74,7 @@ enviaForm(evento){
 class TableAuthor extends Component{
     render(){
         return(
-            <div>            
+            <div>          
             <table className="pure-table">
               <thead>
                 <tr>
@@ -103,25 +106,32 @@ export default class AuthorBox extends Component{
         super();
         this.state = {lista : []};
         }
-        componentDidMount(){
-          $.ajax({
-              url:"http://localhost:8080/api/autores",
-              dataType: 'json',
-              success:function(resposta){
-                this.setState({lista:resposta});
-                }.bind(this)
-          }
-        );
-        PubSub.subscribe('atualiza-lista-autores',function(topico,novaLista){
-            this.setState({lista:novaLista});
-        }.bind(this));
-    }
+
+    componentDidMount(){
+        $.ajax({
+            url:"http://localhost:8080/api/autores",
+            dataType: 'json',
+            success:function(resposta){
+            this.setState({lista:resposta});
+            }.bind(this)
+        }
+    );
+    PubSub.subscribe('atualiza-lista-autores',function(topico,novaLista){
+        this.setState({lista:novaLista});
+    }.bind(this));
+}
 
     render(){
         return(
-            <div className="content" id="content">
-            <FormAuthor/>
-            <TableAuthor lista={this.state.lista} />
+            <div>
+                <div className="header">
+                    <h1>Author Registration</h1>
+                </div>
+                <div className="content" id="content">
+                <FormAuthor/>
+                <TableAuthor lista={this.state.lista} />
+                </div>
+                
             </div>
         );
     }

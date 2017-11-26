@@ -1,42 +1,46 @@
 import React, { Component } from 'react';
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Switch,
+} from 'react-router-dom';
+
 import './css/pure-min.css';
 import './css/side-menu.css';
 import './css/side-menu-old-ie.css';
 import AuthorBox from './Author';
+import Home from './Home'
+import LivroBox from './Livro';
 
 
 class App extends Component {
   render() {
     return (
-<div>
-      <div id="layout">
-    <a href="#menu" id="menuLink" className="menu-link">
-        <span></span>
-    </a>
+      <Router>
+        <div id="layout">
+          <a href="#menu" id="menuLink" className="menu-link"><span></span></a>
+          <div id="menu">
+            <div className="pure-menu">
+              <Link className="pure-menu-heading" to="/">CDC Admin</Link>
+              <ul className="pure-menu-list">
+                <li className="pure-menu-item"><Link to="/" className="pure-menu-link">Home</Link></li>
+                <li className="pure-menu-item"><Link to="/autor" className="pure-menu-link">Author</Link></li>
+                <li className="pure-menu-item"><Link to="/livro" className="pure-menu-link">Books</Link></li>
+              </ul>
+            </div>
+          </div>
 
-    <div id="menu">
-        <div className="pure-menu">
-            <a className="pure-menu-heading" href="jsx-a11y/href-no-hash">Company</a>
-
-            <ul className="pure-menu-list">
-                <li className="pure-menu-item"><a href="jsx-a11y/href-no-hash" className="pure-menu-link">Home</a></li>
-                <li className="pure-menu-item"><a href="jsx-a11y/href-no-hash" className="pure-menu-link">Author</a></li>
-                <li className="pure-menu-item"><a href="jsx-a11y/href-no-hash" className="pure-menu-link">Books</a></li> 
-            </ul>
+          <Switch>
+            <Route path="/" exact component={Home} />
+            <Route path="/autor" component={AuthorBox} />
+            <Route path="/livro" component={LivroBox} />
+            <Route component={Home} />
+          </Switch>
         </div>
-    </div>
-    
-    <div id="main">
-    <div className="header">
-      <h1>Author's register</h1>
-    </div>
-    <AuthorBox />
-
-  </div>            
-
-  </div>
-</div>     
-);
+      </Router>
+    );
+  }
 }
-}
+
 export default App;
