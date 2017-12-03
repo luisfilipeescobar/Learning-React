@@ -5,8 +5,7 @@ import $ from 'jquery';
 import PubSub from 'pubsub-js';
 import TratadorErros from './TratadorErros';
 
-class FormBooks extends Component{
-    
+class FormBooks extends Component{    
             constructor() {
               super();
               this.state = {titulo:'',preco:'',autorId:''};
@@ -15,7 +14,7 @@ class FormBooks extends Component{
               this.setPreco = this.setPreco.bind(this);
               this.setAutorId = this.setAutorId.bind(this);
               }
-    
+              
     enviaForm(evento){
         evento.preventDefault();
         $.ajax({
